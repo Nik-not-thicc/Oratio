@@ -1,0 +1,50 @@
+@page "/review"
+@using BlazorApp1.Components.Pages.Models
+@using BlazorApp1.Services
+
+@inject QuestionService QuestionService
+@inject NavigationManager NavigationManager
+
+<div style="padding: 30px; width: 100vw; justify-content: space-between; display: flex">
+    <h1>Review Answers</h1>
+
+    <MudButton
+        Class="rounded-pill"
+        Variant="Variant.Filled"
+        Color="Color.Primary"
+        StartIcon="@Icons.Material.Filled.List"
+        Href="/overview"
+        Target="#">
+        Overview
+    </MudButton>
+</div>
+<MudDivider/>
+<MudList T="Question">
+    @foreach (var question in QuestionService.GetQuestions())
+    {
+        <MudListItem>
+            <p>Question @(question.QuestionNumber + 1): @question.QuestionText</p>
+            <p>Answer: @question.AnswerText</p>
+        </MudListItem>
+    }
+</MudList>
+
+<MudButton
+    Class="rounded-pill"
+    Variant="Variant.Filled"
+    Color="Color.Primary"
+    Href="/home"
+    Target="#">
+    Hand In
+</MudButton>
+<MudTooltip Text="Back to previous question">
+    <MudIconButton
+        Icon="@Icons.Material.Filled.ArrowBack"
+        Color="Color.Secondary"
+        Variant="Variant.Filled"
+        Class="rounded-pill"
+        Href="@($"/question/{QuestionService.GetQuestions().Count() - 1}")"/>
+</MudTooltip>
+@code {
+    
+}

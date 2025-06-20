@@ -1,0 +1,48 @@
+@page "/home"
+
+<h1>Home</h1>
+
+<h2>Exams</h2>
+<MudTable
+    Items="@exams"
+    Hover="true"
+    Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Exam</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Date">@context.Date</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd>
+            <MudButton
+                Class="rounded-pill"
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                Target="_self"
+                Href="/overview">
+                Take exam
+            </MudButton>
+            <MudTooltip Text="Unregister from exam">
+                <MudIconButton
+                    Color="Color.Error"
+                    Icon="@Icons.Material.Filled.Delete"
+                    Variant="Variant.Filled"
+                    Class="rounded-pill"/>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<Exam> exams =
+    [
+        new("Introduction to Programming", DateTime.Now),
+        new("Computer Networks", DateTime.MaxValue),
+        new("Database Systems", DateTime.MaxValue),
+    ];
+
+    public record Exam(string Name, DateTime Date);
+
+}

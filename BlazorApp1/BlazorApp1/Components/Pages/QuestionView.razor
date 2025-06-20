@@ -1,0 +1,139 @@
+@page "/question/{id:int}"
+
+@using BlazorApp1.Components.Pages.Models
+@using BlazorApp1.Services
+
+@inject QuestionService QuestionService
+@inject NavigationManager NavigationManager
+<div style="padding: 30px; width: 100vw; justify-content: space-between; display: flex">
+    <h1>Exam Computer Science: Question @(question.QuestionNumber + 1) of @(QuestionService.GetQuestions().Count())</h1>
+
+    <MudButton
+        Class="rounded-pill"
+        Variant="Variant.Filled"
+        Color="Color.Primary"
+        StartIcon="@Icons.Material.Filled.List"
+        Href="/overview"
+        Target="#">
+        Overview
+    </MudButton>
+</div>
+<MudDivider/>
+<div style="padding: 30px; width: 100vw; justify-content: space-between; display: flex">
+    <h2>@question.QuestionText</h2>
+    <Countdown/>
+</div>
+
+
+@switch (question.QuestionType)
+{
+    case QuestionType.FreeText:
+        <MudTextField
+            T="string"
+            Value="@question.AnswerText"
+            ValueChanged="OnValueChanged"
+            Adornment="Adornment.End"
+            Lines="5"
+            Label="Your answer goes here..."
+            AdornmentIcon="@Icons.Material.Filled.Mic"/>
+        break;
+    case QuestionType.RadioButton:
+        <MudRadioGroup
+            T="string"
+            Value="@question.AnswerText"
+            ValueChanged="OnValueChanged">
+            <div>
+                @foreach (var answerOption in question.AnswerOptions)
+                {
+                    <MudRadio Value="@answerOption" Color="Color.Primary">@answerOption</MudRadio>
+                }
+            </div>
+        </MudRadioGroup>
+        break;
+}
+@if (question.QuestionNumber == QuestionService.GetQuestions().Count() - 1)
+{
+    <MudButton
+        Class="rounded-pill"
+        Variant="Variant.Filled"
+        Color="Color.Primary"
+        Href="/review"
+        Target="#">
+        Hand In
+    </MudButton>
+}
+<div class="d-flex">
+    <MudTooltip Text="Back to previous question">
+        <MudIconButton
+            Icon="@Icons.Material.Filled.ArrowBack"
+            Disabled="@(question.QuestionNumber == 0)"
+            Color="Color.Secondary"
+            Variant="Variant.Filled"
+            Class="rounded-pill"
+            OnClick="PrevPressed"/>
+    </MudTooltip>
+    <MudButtonGroup 
+        Color="Color.Secondary"
+        Variant="Variant.Filled"
+        Class="rounded-pill">
+        <MudButton
+            StartIcon="@Icons.Material.Filled.Check"
+            OnClick="MarkSolvedPressed">
+            Mark solved
+        </MudButton>
+        <MudButton
+            StartIcon="@Icons.Material.Filled.Close"
+            OnClick="MarkUnsurePressed">
+            Mark unsure
+        </MudButton>
+    </MudButtonGroup>
+    <MudTooltip Text="Proceed to next question">
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.ArrowForward"
+            Disabled="@(question.QuestionNumber == QuestionService.GetQuestions().Count() - 1)"
+            Color="Color.Secondary"
+            Variant="Variant.Filled"
+            Class="rounded-pill"
+            OnClick="NextPressed"/>
+    </MudTooltip>
+</div>
+@code {
+    [Parameter]
+    public required int Id { get; set; }
+
+    private Question question;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        question = QuestionService.GetQuestion(Id);
+    }
+
+    private void OnValueChanged(string value)
+    {
+        QuestionService.SetAnswer(question.QuestionNumber, value);
+        question = QuestionService.GetQuestion(Id);
+    }
+    
+    private void PrevPressed()
+    {
+        NavigationManager.NavigateTo($"/question/{question.QuestionNumber - 1}", forceLoad: true);
+    }
+
+    private void MarkSolvedPressed()
+    {
+        QuestionService.MarkAnswerAsAnswered(question.QuestionNumber);
+        question = QuestionService.GetQuestion(Id);
+    }
+
+    private void MarkUnsurePressed()
+    {
+        QuestionService.MarkAnswerAsUnsure(question.QuestionNumber);
+        question = QuestionService.GetQuestion(Id);
+    }
+    
+    private void NextPressed()
+    {
+        NavigationManager.NavigateTo($"/question/{question.QuestionNumber + 1}", forceLoad: true);
+    }
+}

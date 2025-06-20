@@ -1,0 +1,51 @@
+@using System.Timers
+@implements IDisposable
+
+<div style="display: flex; align-items: stretch;">
+    <div style="font-size: 40px; line-height: 1; padding-right: 20px; color: var(--mud-palette-primary); font-weight: bolder">
+        @TimeRemainingDisplay
+    </div>
+
+    <!-- Two smaller lines stacked vertically -->
+    <div style="display: flex; flex-direction: column; justify-content: space-between; color: var(--mud-palette-primary)">
+        <div style="font-size: 16px;">until</div>
+        <div style="font-size: 16px;">deadline</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int DurationInSeconds { get; set; } = 900;
+
+    private int TimeRemaining;
+    private Timer countdownTimer;
+
+    private string TimeRemainingDisplay => TimeSpan.FromSeconds(TimeRemaining).ToString(@"mm\:ss");
+
+    protected override void OnInitialized()
+    {
+        TimeRemaining = DurationInSeconds;
+
+        countdownTimer = new Timer(1000); // 1 second
+        countdownTimer.Elapsed += OnTimerElapsed;
+        countdownTimer.Start();
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        if (TimeRemaining > 0)
+        {
+            TimeRemaining--;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            countdownTimer?.Stop();
+        }
+    }
+
+    public void Dispose()
+    {
+        countdownTimer?.Dispose();
+    }
+}

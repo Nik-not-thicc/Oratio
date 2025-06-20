@@ -1,0 +1,133 @@
+@page "/overview"
+
+@using BlazorApp1.Components.Pages.Models
+@using BlazorApp1.Services
+
+@inject QuestionService QuestionService
+@inject NavigationManager NavigationManager
+
+<h1>Exam Overview: Exam Computer Science</h1>
+
+<MudDataGrid
+    T="Question"
+    Items="questions"
+    Filterable="true"
+    FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn
+            Property="x => x.QuestionState"
+            CellStyleFunc="cellStyleFunc"
+            Title="Status"/>
+        <PropertyColumn
+            Property="x => x.QuestionText"
+            Title="Question"/>
+        <TemplateColumn
+            Title="Actions">
+            <CellTemplate>
+                <MudTooltip Text="Delete">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Delete"
+                        Color="Color.Error"
+                        Variant="Variant.Filled"
+                        Class="rounded-pill"
+                        OnClick="x => DeletePressed(context.Item)"/>
+                </MudTooltip>
+                <MudTooltip Text="Edit">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Edit"
+                        Color="Color.Primary"
+                        Variant="Variant.Filled"
+                        Class="rounded-pill"
+                        OnClick="x => EditPressed(context.Item)"/>
+                </MudTooltip>
+                @if (context.Item.QuestionState == QuestionState.Answered)
+                {
+                    <MudTooltip Text="Mark unsure">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Close"
+                            Color="Color.Warning"
+                            Variant="Variant.Filled"
+                            Class="rounded-pill"
+                            OnClick="x => MarkUnsurePressed(context.Item)"/>
+                    </MudTooltip>
+                }
+                @if (context.Item.QuestionState == QuestionState.Unsure)
+                {
+                    <MudTooltip Text="Mark answered">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Check"
+                            Color="Color.Success"
+                            Variant="Variant.Filled"
+                            Class="rounded-pill"
+                            OnClick="x => MarkSolvedPressed(context.Item)"/>
+                    </MudTooltip>
+                }
+                @if (context.Item.QuestionState == QuestionState.Unanswered)
+                {
+                    <MudTooltip Text="Mark answered">
+                        <MudIconButton
+                            Icon="@Icons.Material.Filled.Check"
+                            Color="Color.Success"
+                            Variant="Variant.Filled"
+                            Class="rounded-pill"
+                            Disabled="true"/>
+                    </MudTooltip>
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudButton
+    Class="rounded-pill"
+    Variant="Variant.Filled"
+    Color="Color.Primary"
+    OnClick="ProccedPressed">
+    Proceed
+</MudButton>
+
+@code {
+    private IEnumerable<Question> questions = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        questions = QuestionService.GetQuestions();
+    }
+
+    private void ProccedPressed()
+    {
+        NavigationManager.NavigateTo("/question/0");
+    }
+
+    private void EditPressed(Question context)
+    {
+        NavigationManager.NavigateTo($"/question/{context.QuestionNumber}");
+    }
+
+    private void DeletePressed(Question context)
+    {
+        QuestionService.DeleteAnswer(context.QuestionNumber);
+        questions = QuestionService.GetQuestions();
+    }
+
+    private void MarkSolvedPressed(Question context)
+    {
+        QuestionService.MarkAnswerAsAnswered(context.QuestionNumber);
+        questions = QuestionService.GetQuestions();
+    }
+
+    private void MarkUnsurePressed(Question context)
+    {
+        QuestionService.MarkAnswerAsUnsure(context.QuestionNumber);
+        questions = QuestionService.GetQuestions();
+    }
+
+    private Func<Question, string> cellStyleFunc => x => x.QuestionState switch
+    {
+        QuestionState.Answered => "background-color:var(--mud-palette-success)",
+        QuestionState.Unanswered => "background-color:var(--mud-palette-dark-hover)",
+        QuestionState.Unsure => "background-color:var(--mud-palette-error)"
+    };
+   
+}

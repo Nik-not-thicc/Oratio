@@ -1,0 +1,186 @@
+﻿@page "/"
+
+@inject NavigationManager NavigationManager
+<PageTitle>Sign Up for Exam</PageTitle>
+
+@if (showLoginData)
+{
+    <div>
+        <h1>Sign Up for Exam - Provide Login Data</h1>
+    
+        <MudTextField
+            Variant="Variant.Outlined"
+            T="string"
+            @bind-Value="@username"
+            InputType="InputType.Text"
+            Label="Username"/>
+        <MudTextField
+            Variant="Variant.Outlined"
+            T="string"
+            InputType="InputType.Password"
+            @bind-Value="@password"
+            Label="Password"/>
+        <MudButton
+            Class="rounded-pill"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            OnClick="FirstProceedPressed">
+            Proceed
+        </MudButton>
+    </div>
+}
+else if (showExamSelection)
+{
+    <div>
+        <h1>Sign Up for Exam - Select Your Exam</h1>
+
+        <MudSelect
+            Variant="Variant.Outlined"
+            T="string"
+            Label="Available Exams"
+            Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Filled.Search"
+            Clearable="true"
+            @bind-Value="selectedExam">
+            @foreach (var exam in examNames)
+            {
+                <MudSelectItem Value="@exam">@exam</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTooltip Text="Back to login data">
+            <MudIconButton
+                Variant="Variant.Filled"
+                Color="Color.Secondary"
+                Icon="@Icons.Material.Filled.ArrowBack"
+                aria-Label="Back to login data"
+                OnClick="() => { showLoginData = true; showExamSelection = false; }"/>
+        </MudTooltip>
+        <MudButton
+            Class="rounded-pill"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            OnClick="SecondProceedPressed">
+            Proceed
+        </MudButton>
+    </div>
+} else if (showExamSettings)
+{
+    <div>
+        <h1>Sign Up for Exam - Select Preferred Exam Settings</h1>
+
+        <MudCheckBox T="bool" Label="Oral exam"/>
+        <MudCheckBox T="bool" Label="Need guided assistance"/>
+        <MudCheckBox T="bool" Label="Extended time"/>
+        <MudCheckBox T="bool" Label="Need technological assistance"/>
+        <MudTooltip Text="Back to exam selection">
+            <MudIconButton
+                Variant="Variant.Filled"
+                Color="Color.Secondary"
+                Icon="@Icons.Material.Filled.ArrowBack"
+                aria-Label="Back to exam selection"
+                OnClick="() => { showExamSelection = true; showExamSettings = false; }"/>
+        </MudTooltip>
+        <MudButton
+            Class="rounded-pill"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            OnClick="ThirdProceedPressed">
+            Proceed
+        </MudButton>
+    </div>
+} else if (showSummary)
+{
+    <div>
+        <h1>Sign Up for Exam - Summary</h1>
+        
+        <div style="display: flex">
+            <h2>Selected Exam:</h2>
+            <div>
+                <p>Computer Science</p>
+                <div style="display: flex">
+                    <MudIcon Icon="@Icons.Material.Filled.CalendarToday"/>
+                    <p>Monday 9th of June, 15:15</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex">
+            <h2>Selected Exam Settings:</h2>
+            <ul>
+                <li>Oral exam</li>
+                <li>Extended time</li>
+            </ul>
+        </div>
+        
+        <MudTooltip Text="Back to exam settings">
+            <MudIconButton
+                Variant="Variant.Filled"
+                Color="Color.Secondary"
+                Icon="@Icons.Material.Filled.ArrowBack"
+                aria-Label="Back to exam settings"
+                OnClick="() => { showExamSettings = true; showSummary = false; }"/>
+        </MudTooltip>
+        <MudButton
+            Class="rounded-pill"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            Target="_self"
+            Href="/registered">
+            Submit Request
+        </MudButton>
+    </div>
+}
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private bool showLoginData = true;
+    private bool showExamSelection;
+    private bool showExamSettings;
+    private bool showSummary;
+    private string selectedExam = string.Empty;
+
+    private readonly string[] examNames =
+    [
+        "Introduction to Programming",
+        "Computer Networks",
+        "Database Systems",
+        "Operating Systems",
+        "Web Development",
+        "Software Engineering",
+        "Cybersecurity Fundamentals",
+        "Data Structures and Algorithms",
+        "Cloud Computing",
+        "Mobile App Development"
+    ];
+
+    private void FirstProceedPressed()
+    {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            return;
+        }
+
+        showLoginData = false;
+        showExamSelection = true;
+        StateHasChanged();
+    }
+    
+    private void SecondProceedPressed()
+    {
+        if (string.IsNullOrEmpty(selectedExam))
+        {
+            return;
+        }
+        
+        showExamSelection = false;
+        showExamSettings = true;
+        StateHasChanged();
+    }
+    
+    private void ThirdProceedPressed()
+    {
+        showExamSettings = false;
+        showSummary = true;
+    }
+}

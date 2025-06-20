@@ -1,0 +1,53 @@
+<MudDialog>
+    <DialogContent>
+        @foreach (var message in messages)
+        {
+            if (messages.FindIndex(x => x == message) % 2 == 0)
+            {
+                <MudChip
+                    T="string"
+                    Variant="Variant.Outlined">
+                    @message
+                </MudChip>
+            }
+            else
+            {
+                <div style="display: flex; justify-content: end">
+                    <MudChip
+                        T="string"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary">
+                        @message
+                    </MudChip>
+                </div>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudTextField
+            T="string"
+            Variant="Variant.Outlined"
+            @bind-Value="toSend"/>
+        <MudTooltip Text="Send message">
+            <MudIconButton
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                Icon="@Icons.Material.Filled.Send"
+                Size="Size.Large"
+                OnClick="SendPressed"/>
+        </MudTooltip>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    private string toSend = string.Empty;
+    private List<string> messages = ["How can I help you?"];
+    
+    private void SendPressed()
+    {
+        messages.Add(toSend);
+        toSend = string.Empty;
+        messages.Add("Please ask your presenter for guidance.");
+    }
+}
