@@ -38,9 +38,9 @@
 @code {
     private List<Exam> exams =
     [
-        new("Introduction to Programming", DateTime.Now),
-        new("Computer Networks", DateTime.MaxValue),
-        new("Database Systems", DateTime.MaxValue),
+        new("Introduction to Programming", DateTime.Parse("14.06.2025 13:41:53")),
+        new("Computer Networks", DateTime.Parse("12.06.2025 17:12:42")),
+        new("Database Systems", DateTime.Parse("06.06.2025 14:14:42")),
     ];
 
     public record Exam(string Name, DateTime Date);

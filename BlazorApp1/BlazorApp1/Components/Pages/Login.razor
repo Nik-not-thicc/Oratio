@@ -5,23 +5,25 @@
 
 @if (showLoginData)
 {
-    <div>
+    <div class="form-container">
         <h1>Sign Up for Exam - Provide Login Data</h1>
-    
+
         <MudTextField
+            Class="form-field"
             Variant="Variant.Outlined"
             T="string"
             @bind-Value="@username"
             InputType="InputType.Text"
             Label="Username"/>
         <MudTextField
+            Class="form-field"
             Variant="Variant.Outlined"
             T="string"
             InputType="InputType.Password"
             @bind-Value="@password"
             Label="Password"/>
         <MudButton
-            Class="rounded-pill"
+            Class="rounded-pill form-field"
             Variant="Variant.Filled"
             Color="Color.Primary"
             OnClick="FirstProceedPressed">
@@ -31,10 +33,11 @@
 }
 else if (showExamSelection)
 {
-    <div>
+    <div class="form-container">
         <h1>Sign Up for Exam - Select Your Exam</h1>
 
         <MudSelect
+            Class="form-field"
             Variant="Variant.Outlined"
             T="string"
             Label="Available Exams"
@@ -47,87 +50,122 @@ else if (showExamSelection)
                 <MudSelectItem Value="@exam">@exam</MudSelectItem>
             }
         </MudSelect>
-        <MudTooltip Text="Back to login data">
-            <MudIconButton
+
+        <div class="button-row">
+            <MudTooltip Text="Back to login data">
+                <MudIconButton
+                    Class="form-button"
+                    Variant="Variant.Filled"
+                    Color="Color.Secondary"
+                    Icon="@Icons.Material.Filled.ArrowBack"
+                    aria-Label="Back to login data"
+                    OnClick="() => { showLoginData = true; showExamSelection = false; }"/>
+            </MudTooltip>
+            <MudButton
+                Class="rounded-pill form-button"
                 Variant="Variant.Filled"
-                Color="Color.Secondary"
-                Icon="@Icons.Material.Filled.ArrowBack"
-                aria-Label="Back to login data"
-                OnClick="() => { showLoginData = true; showExamSelection = false; }"/>
-        </MudTooltip>
-        <MudButton
-            Class="rounded-pill"
-            Variant="Variant.Filled"
-            Color="Color.Primary"
-            OnClick="SecondProceedPressed">
-            Proceed
-        </MudButton>
+                Color="Color.Primary"
+                OnClick="SecondProceedPressed">
+                Proceed
+            </MudButton>
+        </div>
     </div>
-} else if (showExamSettings)
+}
+else if (showExamSettings)
 {
-    <div>
+    <div class="form-container">
         <h1>Sign Up for Exam - Select Preferred Exam Settings</h1>
 
-        <MudCheckBox T="bool" Label="Oral exam"/>
-        <MudCheckBox T="bool" Label="Need guided assistance"/>
-        <MudCheckBox T="bool" Label="Extended time"/>
-        <MudCheckBox T="bool" Label="Need technological assistance"/>
-        <MudTooltip Text="Back to exam selection">
-            <MudIconButton
+        <div class="checkbox-group form-field">
+            <MudCheckBox T="bool" Label="Oral exam" Color="Color.Primary" @bind-Value="isOralExam"/>
+            <MudCheckBox T="bool" Label="Need guided assistance" Color="Color.Primary"
+                         @bind-Value="needsGuidedAssistance"/>
+            <MudCheckBox T="bool" Label="Extended time" Color="Color.Primary" @bind-Value="needsExtendedTime"/>
+            <MudCheckBox T="bool" Label="Need technological assistance" Color="Color.Primary"
+                         @bind-Value="needsTechAssistance"/>
+        </div>
+
+        <div class="button-row">
+            <MudTooltip Text="Back to exam selection">
+                <MudIconButton
+                    Class="form-button"
+                    Variant="Variant.Filled"
+                    Color="Color.Secondary"
+                    Icon="@Icons.Material.Filled.ArrowBack"
+                    aria-Label="Back to exam selection"
+                    OnClick="() => { showExamSelection = true; showExamSettings = false; }"/>
+            </MudTooltip>
+            <MudButton
+                Class="rounded-pill form-button"
                 Variant="Variant.Filled"
-                Color="Color.Secondary"
-                Icon="@Icons.Material.Filled.ArrowBack"
-                aria-Label="Back to exam selection"
-                OnClick="() => { showExamSelection = true; showExamSettings = false; }"/>
-        </MudTooltip>
-        <MudButton
-            Class="rounded-pill"
-            Variant="Variant.Filled"
-            Color="Color.Primary"
-            OnClick="ThirdProceedPressed">
-            Proceed
-        </MudButton>
+                Color="Color.Primary"
+                OnClick="ThirdProceedPressed">
+                Proceed
+            </MudButton>
+        </div>
     </div>
-} else if (showSummary)
+}
+else if (showSummary)
 {
-    <div>
+    <div class="form-container">
         <h1>Sign Up for Exam - Summary</h1>
-        
-        <div style="display: flex">
+
+        <div class="summary-row">
             <h2>Selected Exam:</h2>
             <div>
-                <p>Computer Science</p>
-                <div style="display: flex">
+                <p>@selectedExam</p>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <MudIcon Icon="@Icons.Material.Filled.CalendarToday"/>
                     <p>Monday 9th of June, 15:15</p>
                 </div>
             </div>
         </div>
-        
-        <div style="display: flex">
+
+        <div class="summary-row">
             <h2>Selected Exam Settings:</h2>
             <ul>
-                <li>Oral exam</li>
-                <li>Extended time</li>
+                @if (isOralExam)
+                {
+                    <li>Oral exam</li>
+                }
+                @if (needsGuidedAssistance)
+                {
+                    <li>Need guided assistance</li>
+                }
+                @if (needsExtendedTime)
+                {
+                    <li>Extended time</li>
+                }
+                @if (needsTechAssistance)
+                {
+                    <li>Need technological assistance</li>
+                }
+                @if (!isOralExam && !needsGuidedAssistance && !needsExtendedTime && !needsTechAssistance)
+                {
+                    <li>No special settings selected</li>
+                }
             </ul>
         </div>
-        
-        <MudTooltip Text="Back to exam settings">
-            <MudIconButton
+
+        <div class="button-row">
+            <MudTooltip Text="Back to exam settings">
+                <MudIconButton
+                    Class="form-button"
+                    Variant="Variant.Filled"
+                    Color="Color.Secondary"
+                    Icon="@Icons.Material.Filled.ArrowBack"
+                    aria-Label="Back to exam settings"
+                    OnClick="() => { showExamSettings = true; showSummary = false; }"/>
+            </MudTooltip>
+            <MudButton
+                Class="rounded-pill form-button"
                 Variant="Variant.Filled"
-                Color="Color.Secondary"
-                Icon="@Icons.Material.Filled.ArrowBack"
-                aria-Label="Back to exam settings"
-                OnClick="() => { showExamSettings = true; showSummary = false; }"/>
-        </MudTooltip>
-        <MudButton
-            Class="rounded-pill"
-            Variant="Variant.Filled"
-            Color="Color.Primary"
-            Target="_self"
-            Href="/registered">
-            Submit Request
-        </MudButton>
+                Color="Color.Primary"
+                Target="_self"
+                Href="/registered">
+                Submit Request
+            </MudButton>
+        </div>
     </div>
 }
 
@@ -139,6 +177,12 @@ else if (showExamSelection)
     private bool showExamSettings;
     private bool showSummary;
     private string selectedExam = string.Empty;
+
+    private bool isOralExam;
+    private bool needsGuidedAssistance;
+    private bool needsExtendedTime;
+    private bool needsTechAssistance;
+
 
     private readonly string[] examNames =
     [
@@ -165,22 +209,23 @@ else if (showExamSelection)
         showExamSelection = true;
         StateHasChanged();
     }
-    
+
     private void SecondProceedPressed()
     {
         if (string.IsNullOrEmpty(selectedExam))
         {
             return;
         }
-        
+
         showExamSelection = false;
         showExamSettings = true;
         StateHasChanged();
     }
-    
+
     private void ThirdProceedPressed()
     {
         showExamSettings = false;
         showSummary = true;
     }
+
 }

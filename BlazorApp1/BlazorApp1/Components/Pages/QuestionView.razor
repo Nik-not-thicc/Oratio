@@ -62,7 +62,7 @@
         Hand In
     </MudButton>
 }
-<div class="d-flex">
+<div class="d-flex button-group-gap">
     <MudTooltip Text="Back to previous question">
         <MudIconButton
             Icon="@Icons.Material.Filled.ArrowBack"
@@ -72,10 +72,10 @@
             Class="rounded-pill"
             OnClick="PrevPressed"/>
     </MudTooltip>
-    <MudButtonGroup 
+    <MudButtonGroup
         Color="Color.Secondary"
         Variant="Variant.Filled"
-        Class="rounded-pill">
+        Class="rounded-pill button-group-gap">
         <MudButton
             StartIcon="@Icons.Material.Filled.Check"
             OnClick="MarkSolvedPressed">
@@ -88,7 +88,7 @@
         </MudButton>
     </MudButtonGroup>
     <MudTooltip Text="Proceed to next question">
-        <MudIconButton 
+        <MudIconButton
             Icon="@Icons.Material.Filled.ArrowForward"
             Disabled="@(question.QuestionNumber == QuestionService.GetQuestions().Count() - 1)"
             Color="Color.Secondary"
@@ -97,9 +97,9 @@
             OnClick="NextPressed"/>
     </MudTooltip>
 </div>
+
 @code {
-    [Parameter]
-    public required int Id { get; set; }
+    [Parameter] public required int Id { get; set; }
 
     private Question question;
 
@@ -114,7 +114,7 @@
         QuestionService.SetAnswer(question.QuestionNumber, value);
         question = QuestionService.GetQuestion(Id);
     }
-    
+
     private void PrevPressed()
     {
         NavigationManager.NavigateTo($"/question/{question.QuestionNumber - 1}", forceLoad: true);
@@ -131,9 +131,10 @@
         QuestionService.MarkAnswerAsUnsure(question.QuestionNumber);
         question = QuestionService.GetQuestion(Id);
     }
-    
+
     private void NextPressed()
     {
         NavigationManager.NavigateTo($"/question/{question.QuestionNumber + 1}", forceLoad: true);
     }
+
 }

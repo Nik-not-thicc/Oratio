@@ -1,12 +1,14 @@
 @page "/registered"
-<div style="display: flex; flex-direction: column; justify-content: center; align-content: center">
+<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+
     <h1>Sign Up for Exams - Confirmation</h1>
 
     <p>Your request for exam Interface & Interaction Design was successful.</p>
 
     <p>Please check your inbox for further updates on your request. Thank you!</p>
     
-    <div style="display: flex">
+    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+
         <MudButton
             Class="rounded-pill"
             Variant="Variant.Filled"
@@ -20,7 +22,8 @@
             Class="rounded-pill"
             Variant="Variant.Filled"
             Color="Color.Secondary"
-            StartIcon="@Icons.Material.Filled.Edit">
+            StartIcon="@Icons.Material.Filled.Edit"
+            OnClick="ChangeExam">
             Change Exam
         </MudButton>
         <MudButton
